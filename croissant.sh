@@ -60,7 +60,11 @@ else chromium_image="$1"; fi
 
 if [ ! -f "$2" ]; then echo "Image $2 not found"; abort_chromefy; fi
 chromeos_image=`losetup --show -fP "$2"`
-mount "$chromeos_image"p3 /home/chronos/image -o loop,ro  2>/dev/null
+if [ -b "$chromeos_image"p3 ]; then
+    mount "$chromeos_image"p3 /home/chronos/image -o loop,ro  2>/dev/null
+else
+    mount $2 /home/chronos/image -o loop,ro  2>/dev/null
+fi
 if [ ! $? -eq 0 ]; then echo "Image $2 does not have a system partition (corrupted?)"; abort_chromefy; fi
 
 if [ ! -z "$3" ]; then
@@ -183,11 +187,18 @@ cp -av /home/chronos/image/* /home/chronos/local
 umount /home/chronos/image
 
 #Copies modules and certificates from ChromiumOS
-rm -rf /home/chronos/local/lib/firmware
-rm -rf /home/chronos/local/lib/modules/ 
+rm -rf /home/chronos/local/lib/
 cp -av "$chromium_root_dir"/{lib,boot} /home/chronos/local/
 cp -nav "$chromium_root_dir"/usr/lib64/{dri,va} /home/chronos/local/usr/lib64/ #Extra GPU drivers
 rm -rf /home/chronos/local/etc/modprobe.d/alsa*.conf
+mkdir /home/chronos/local/etc/modules-load.d/
+touch /home/chronos/local/etc/modules-load.d/wl.conf
+echo "wl" >> /home/chronos/local/etc/modules-load.d/wl.conf
+touch /home/chronos/local/etc/modprobe.d/blacklist.conf
+echo "blacklist b43" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
+echo "blacklist ssb" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
+echo "blacklist bcma" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
+echo "blacklist brcmsmac" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
 
 echo "Is your wireless card bcm43xx? Answer no if unsure (y/n)"
 read_choice
