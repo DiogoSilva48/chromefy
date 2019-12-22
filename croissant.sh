@@ -187,7 +187,8 @@ cp -av /home/chronos/image/* /home/chronos/local
 umount /home/chronos/image
 
 #Copies modules and certificates from ChromiumOS
-rm -rf /home/chronos/local/lib/
+rm -rf /home/chronos/local/lib/firmware
+rm -rf /home/chronos/local/lib/modules/
 cp -av "$chromium_root_dir"/{lib,boot} /home/chronos/local/
 cp -nav "$chromium_root_dir"/usr/lib64/{dri,va} /home/chronos/local/usr/lib64/ #Extra GPU drivers
 rm -rf /home/chronos/local/etc/modprobe.d/alsa*.conf
