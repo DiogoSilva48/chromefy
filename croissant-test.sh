@@ -192,39 +192,17 @@ rm -rf /home/chronos/local/lib/modules/
 cp -av "$chromium_root_dir"/{lib,boot} /home/chronos/local/
 cp -nav "$chromium_root_dir"/usr/lib64/{dri,va} /home/chronos/local/usr/lib64/ #Extra GPU drivers
 rm -rf /home/chronos/local/etc/modprobe.d/alsa*.conf
-mkdir /home/chronos/local/etc/modules-load.d/
-touch /home/chronos/local/etc/modules-load.d/wl.conf
-echo "wl" >> /home/chronos/local/etc/modules-load.d/wl.conf
-touch /home/chronos/local/etc/modprobe.d/blacklist.conf
-echo "blacklist b43" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
-echo "blacklist ssb" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
-echo "blacklist bcma" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
-echo "blacklist brcmsmac" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
+
 
 echo "Is your wireless card bcm43xx? Answer no if unsure (y/n)"
 read_choice
 if [ "$choice" = true ]; then
     # enable bcm43xx wifi
-    cat > /home/chronos/local/lib/modprobe.d/blacklist.conf <<EOF
-blacklist b43
-install b43 /bin/true
-blacklist b43legacy
-install b43legacy /bin/true
-blacklist ssb
-install ssb /bin/true
-blacklist bcm43xx
-install bcm43xx /bin/true
-blacklist brcm80211
-install brcm80211 /bin/true
-blacklist brcmfmac
-install brcmfmac /bin/true
-blacklist brcmsmac
-install brcmsmac /bin/true
-blacklist brcmutil
-install brcmutil /bin/true
-blacklist bcma
-install bcma /bin/true
-EOF
+touch /home/chronos/local/etc/modprobe.d/blacklist.conf
+echo "blacklist b43" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
+echo "blacklist ssb" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
+echo "blacklist bcma" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
+echo "alias wlan0 wl" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
 fi
 
 echo "Is your computer MacBook/Pro/Air? (y/n)"
