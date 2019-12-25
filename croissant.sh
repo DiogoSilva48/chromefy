@@ -205,28 +205,6 @@ echo "blacklist bcma" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
 echo "alias wlan0 wl" >> /home/chronos/local/etc/modprobe.d/blacklist.conf
 fi
 
-echo "Is your computer MacBook/Pro/Air? (y/n)"
-read_choice
-if [ "$choice" = true ]; then
-    # enable trackpad
-    cat > /home/chronos/local/lib/udev/rules.d/60-evdev-apple-touchpad.rules <<EOF
-ACTION=="remove", GOTO="evdev_apple_end"
-KERNEL!="event*", GOTO="evdev_apple_end"
-
-ENV{ID_INPUT_TOUCHPAD}=="1", \
-  ATTRS{name}=="bcm5974", \
-  ENV{EVDEV_ABS_00}="::94", ENV{EVDEV_ABS_01}="::92", \
-  ENV{EVDEV_ABS_35}="::94", ENV{EVDEV_ABS_36}="::92", \
-  RUN{builtin}+="keyboard", GOTO="evdev_apple_end"
-
-LABEL="evdev_apple_end"
-EOF
-
-    cat > /home/chronos/local/lib/udev/rules.d/90-powerd-id-apple-touchpad.rules <<EOF
-SUBSYSTEM=="input", ENV{ID_INPUT_TOUCHPAD}=="1",    ATTRS{name}=="bcm5974",  ENV{POWERD_ROLE}="internal_touchpad"
-EOF
-fi
-
 echo; echo "Leave selinux on enforcing? (Won't break SafetyNet without developer mode, but might cause issues with android apps)"
 echo "Answer no if unsure (y/n)"
 read_choice
